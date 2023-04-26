@@ -4,14 +4,52 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3a518344-82c2-4cf7-a376-0982bc0abe7c" name="Changes" comment="" />
+    <list default="true" id="3a518344-82c2-4cf7-a376-0982bc0abe7c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/HomeIcon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/cartIcon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/Customer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/DbConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/DbConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/EcomApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/EcomApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/Login.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/Login.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/Order.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/OrderList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/OrderList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/ProductList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/ProductList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/SearchProductList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/SearchProductList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/UserInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/UserInterface.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/imgbin_house-logo-real-estate-png.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/kisspng-website-development-e-commerce-clip-art-business-m-obstetrics-5b66aeb7790850.5122913715334560554958.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="ROOT_SYNC" value="SYNC" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/main/java/com/example/ecomapp/Admin.java" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectId" id="2OYAAI6Hv2GREMiEgclusHpwwgq" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -19,14 +57,35 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Nren/IdeaProjects/EcomApp&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Nren\IdeaProjects\EcomApp\src\main\java" />
+      <recent name="C:\Users\Nren\IdeaProjects\EcomApp\src" />
+      <recent name="C:\Users\Nren\IdeaProjects\EcomApp\lib" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="EcomApp" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="com.example.ecomapp.EcomApp" />
+      <module name="EcomApp" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -37,5 +96,30 @@
       <updated>1681727000653</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.NullPointerException" package="java.lang" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.ClassCastException" package="java.lang" />
+          <option name="timeStamp" value="2" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
