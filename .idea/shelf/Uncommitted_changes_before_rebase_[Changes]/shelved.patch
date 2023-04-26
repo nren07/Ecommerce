@@ -1,0 +1,1338 @@
+Index: src/main/java/com/example/ecomapp/OrderList.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.ecomapp;public class OrderList {\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/ecomapp/OrderList.java b/src/main/java/com/example/ecomapp/OrderList.java
+--- a/src/main/java/com/example/ecomapp/OrderList.java	(revision a532060ff5f0fd0cb97e5bd12472fd0f04596724)
++++ b/src/main/java/com/example/ecomapp/OrderList.java	(date 1682493125768)
+@@ -1,2 +1,74 @@
+-package com.example.ecomapp;public class OrderList {
++package com.example.ecomapp;
++
++import javafx.collections.ObservableList;
++import javafx.geometry.Insets;
++import javafx.scene.control.TableColumn;
++import javafx.scene.control.TableView;
++import javafx.scene.control.cell.PropertyValueFactory;
++import javafx.scene.layout.VBox;
++
++public class OrderList {
++    public static TableView<Order> orderTable;
++    static boolean isAdmin=false;
++    static boolean isCustomer=false;
++
++    public static VBox createTable(ObservableList<Order> data) {
++
++//        cols
++        TableColumn id=new TableColumn("Product ID");
++        id.setCellValueFactory(new PropertyValueFactory<>("id"));
++
++        TableColumn customerId=new TableColumn("Customer ID");
++        customerId.setCellValueFactory(new PropertyValueFactory<>("customerId"));
++
++        //
++        TableColumn price = new TableColumn("PRICE");
++        price.setCellValueFactory(new PropertyValueFactory<>("price"));
++//
++        TableColumn name = new TableColumn("Product Name");
++        name.setCellValueFactory(new PropertyValueFactory<>("name"));
++
++        TableColumn quantity=new TableColumn("QTY");
++        quantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
++
++        TableColumn order_date=new TableColumn("ORDER DATE");
++        order_date.setCellValueFactory(new PropertyValueFactory<>("order_date"));
++
++        TableColumn order_status=new TableColumn("ORDER STATUS");
++        order_status.setCellValueFactory(new PropertyValueFactory<>("order_status"));
++
++        orderTable = new TableView<>();
++
++        if(isCustomer) orderTable.getColumns().addAll(id,name,price,quantity);
++        if(isAdmin) orderTable.getColumns().addAll(id,customerId,name,price,order_date,order_status);
++
++        orderTable.setItems(data);
++        orderTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
++        orderTable.setTableMenuButtonVisible(true);
++        // to eliminate extra column and spread column at equal space
++//        orderTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
++//        orderTable.setTableMenuButtonVisible(true);
++
++        VBox vbox = new VBox();
++        vbox.setFillWidth(true);
++        vbox.setPadding(new Insets(20));
++        vbox.getChildren().add (orderTable);
++        return vbox;
++    }
++    public static VBox getAllOrders(){
++        isCustomer=true;
++        ObservableList<Order>data=Order.getAllOrders();
++        return createTable(data);
++    }
++    public static VBox getAllOrdersAdmin(){
++        isAdmin=true;
++        ObservableList<Order>data=Order.getAllOrdersAdmin();
++        return createTable(data);
++    }
++
++    public static Order getSelectedOrders(){
++        return orderTable.getSelectionModel().getSelectedItem();
++    }
+ }
++
++
+Index: src/main/java/com/example/ecomapp/UserInterface.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.ecomapp;public class UserInterface {\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/ecomapp/UserInterface.java b/src/main/java/com/example/ecomapp/UserInterface.java
+--- a/src/main/java/com/example/ecomapp/UserInterface.java	(revision a532060ff5f0fd0cb97e5bd12472fd0f04596724)
++++ b/src/main/java/com/example/ecomapp/UserInterface.java	(date 1682491376209)
+@@ -1,2 +1,481 @@
+-package com.example.ecomapp;public class UserInterface {
+-}
++package com.example.ecomapp;
++
++import javafx.collections.FXCollections;
++import javafx.collections.ObservableList;
++import javafx.geometry.Insets;
++import javafx.geometry.Pos;
++import javafx.scene.control.*;
++import javafx.scene.image.Image;
++import javafx.scene.image.ImageView;
++import javafx.scene.layout.BorderPane;
++import javafx.scene.layout.GridPane;
++import javafx.scene.layout.HBox;
++import javafx.scene.layout.VBox;
++import javafx.scene.text.Text;
++
++public class UserInterface {
++
++    HBox headerBar,footerBar, welcomeBox;
++    GridPane loginPage,signUpPage;
++    VBox body,productPage,orderPage,searchPage;
++    Button signInButton,loggedOutButton,backBtn,cartBtn;
++    Button productAddBtn,viewOrdersBtn,newAdminSignUpBtn,viewRegisteredUser,viewAdminUserDetails;
++    Label msg,welcomeLabel;
++    Boolean isSign = false;
++    ObservableList<Product> items = FXCollections.observableArrayList();
++    public static User loggedInCustomer;
++    public static User loggedInAdmin;
++    TextField searchText=new TextField();
++
++    public UserInterface() {
++        createContent();
++        headerPage();
++        footerPage();
++        createLoginPage();
++        createSignUpPage();
++        createAdminPage();
++        cartListPage();
++
++    }
++
++    public BorderPane createContent() {
++
++        backBtn=new Button("Go back");
++        body = new VBox();
++        body.setAlignment(Pos.CENTER);
++
++        BorderPane root = new BorderPane();
++
++        root.setPrefSize(800, 600);
++
++        productPage = ProductList.getAllProducts();
++        productPage.setAlignment(Pos.CENTER);
++
++        body.getChildren().add(productPage);
++
++        root.setTop(headerBar);
++        root.setCenter(body);
++        root.setBottom(footerBar);
++
++        return root;
++
++    }
++    public void headerPage() {
++
++        headerBar = new HBox(20);
++        headerBar.setPrefHeight(100);
++        headerBar.setAlignment(Pos.CENTER);
++
++        Button homeBtn=new Button("Home");
++        homeBtn.setStyle("-fx-font-weight : bold; -fx-text-fill : #8B088B;");
++        Image imgHome = new Image("C:\\Users\\Nren\\IdeaProjects\\EcomApp\\src\\main\\java\\imgbin_house-logo-real-estate-png.png");
++        ImageView homeImgView = new ImageView(imgHome);
++        homeImgView.setFitHeight(15);
++        homeImgView.setFitWidth(30);
++        homeBtn.setGraphic(homeImgView);
++
++        searchText = new TextField();
++        searchText.setPromptText("search here");
++
++        Button searchBtn=new Button("Search");
++
++        signInButton = new Button("Sign In");
++
++        cartBtn=new Button("Cart");
++        cartBtn.setStyle("-fx-font-weight : bold; -fx-text-fill : #8B088B;");
++
++        Button orderBtn=new Button("Order");
++        msg=new Label();
++
++        Image cartImage = new Image("C:\\Users\\Nren\\IdeaProjects\\EcomApp\\src\\main\\java\\kisspng-website-development-e-commerce-clip-art-business-m-obstetrics-5b66aeb7790850.5122913715334560554958.png");
++        ImageView imageView = new ImageView(cartImage);
++        imageView.setFitHeight(15);
++        imageView.setFitWidth(30);
++        cartBtn.setGraphic(imageView);
++
++        loggedOutButton = new Button("Log Out");
++
++        headerBar.getChildren().addAll(homeBtn, msg, searchText, searchBtn, signInButton, cartBtn, orderBtn);
++
++        loggedOutButton.setOnAction(actionEvent -> {
++            headerBar.getChildren().clear();
++            headerBar.getChildren().addAll(homeBtn, msg, searchText, searchBtn, signInButton, cartBtn, orderBtn);
++            msg.setText("");
++            body.getChildren().clear();
++            body.getChildren().add(productPage);
++            isSign = false;
++            OrderList.isAdmin=false;
++            OrderList.isCustomer=false;
++            footerBar.setVisible(true);
++        });
++        homeBtn.setOnAction(actionEvent -> {
++            body.getChildren().clear();
++            body.getChildren().add(productPage);
++            footerBar.setVisible(true);
++            headerBar.setVisible(true);
++        });
++        backBtn.setOnAction(actionEvent1 -> {
++            body.getChildren().clear();
++            body.getChildren().add(productPage);
++            headerBar.setVisible(true);
++            footerBar.setVisible(true);
++        });
++
++        signInButton.setOnAction(actionEvent -> {
++
++            body.getChildren().clear();
++            body.getChildren().addAll(loginPage);
++            headerBar.setVisible(false);
++            footerBar.setVisible(false);
++
++        });
++
++        orderBtn.setOnAction(actionEvent -> {
++            if(isSign && Order.getAllOrders()!=null){
++                    orderPage=OrderList.getAllOrders();
++                    orderPage.setAlignment(Pos.CENTER);
++                    body.getChildren().clear();
++                    body.getChildren().add(orderPage);
++                    footerBar.setVisible(false);
++            }else{
++                Label label=new Label("Does Not have any order History");
++                body.getChildren().clear();
++                body.getChildren().add(label);
++                footerBar.setVisible(false);
++            }
++
++        });
++
++        searchBtn.setOnAction(actionEvent -> {
++            String search=searchText.getText();
++            searchPage = SearchProductList.searchProduct(search);
++
++            body.getChildren().clear();
++            body.getChildren().add(searchPage);
++            footerBar.setVisible(true);
++        });
++
++    }
++    public void footerPage() {
++
++        footerBar = new HBox(20);
++        footerBar.setPrefHeight(50);
++        footerBar.setAlignment(Pos.CENTER);
++
++        Button addToCartBtn = new Button("Add To Cart");
++
++        Button buyButton = new Button("Buy Now");
++
++        buyButton.setStyle("-fx-font-weight: bold; -fx-text-fill : #0000FF");
++
++        footerBar.getChildren().addAll(buyButton, addToCartBtn);
++
++        buyButton.setOnAction(actionEvent -> {
++            if (isSign) {
++                Product product = ProductList.getSelectedProduct();
++                if (product == null) {
++//                    please select a product first!
++                    showDialog("please select a product first!");
++                    return;
++                }
++                boolean status = Order.placeOrder(loggedInCustomer, product);
++                if (status) {
++                    showDialog("Order Placed");
++                } else showDialog("Order Failed!");
++
++            } else {
++                showDialog("login first to order product");
++            }
++        });
++
++        addToCartBtn.setOnAction(actionEvent -> {
++            Product product = ProductList.getSelectedProduct();
++            if (product != null) {
++                items.add(product);
++                showDialog("iteam added successfully into cart");
++            } else {
++                showDialog("select iteam first");
++            }
++
++        });
++
++    }
++    public void createLoginPage() {
++
++        loginPage = new GridPane();
++        loginPage.setVgap(10);
++        loginPage.setHgap(20);
++        loginPage.setAlignment(Pos.CENTER);
++
++        Button loginButton=new Button("Login");
++        Button signUpBtn=new Button("Sign Up");
++        Button adminLoginBtn=new Button("Admin Login");
++
++        //      text represent like label of username ans password
++        Text useNameText = new Text("User Name");
++        Text passwordText = new Text("Password");
++//      textField is used for text input
++        TextField userName = new TextField();
++        userName.setPromptText("type your username here");
++
++//      password field is used to take password without showing digitof password
++        PasswordField password = new PasswordField();
++        password.setPromptText("type your password here");
++
++        loginPage.add(useNameText, 0, 0);
++        loginPage.add(userName, 1, 0);
++        loginPage.add(passwordText, 0, 1);
++        loginPage.add(password, 1, 1);
++        HBox hbox = new HBox(50);
++        hbox.setPrefHeight(10);
++        hbox.setAlignment(Pos.CENTER);
++
++
++        hbox.getChildren().addAll(loginButton, signUpBtn,adminLoginBtn);
++        loginPage.add(hbox, 1, 2);
++
++        loginButton.setOnAction(actionEvent -> {
++
++            Login login = new Login();
++
++            String userId = userName.getText();
++            String pass = password.getText();
++
++            loggedInCustomer = login.customerLogin(userId, pass);
++
++            if (loggedInCustomer != null) {
++
++                msg.setText("Welcome : " + loggedInCustomer.getName());
++                isSign = true;
++                body.getChildren().clear();
++                body.getChildren().add(productPage);
++                headerBar.setVisible(true);
++                headerBar.getChildren().remove(signInButton);
++                headerBar.getChildren().add(loggedOutButton);
++                footerBar.setVisible(true);
++
++            } else {
++                userName.clear();
++                password.clear();
++
++                Alert alert = new Alert(Alert.AlertType.WARNING);
++                alert.setContentText("Incorrect username and password");
++                alert.show();
++            }
++
++        });
++
++        adminLoginBtn.setOnAction(actionEvent -> {
++
++            Login login = new Login();
++
++            String userId = userName.getText();
++            String pass = password.getText();
++
++            loggedInAdmin = login.adminLogin(userId, pass);
++
++            if (loggedInAdmin != null) {
++
++                msg.setText("Welcome : " + loggedInAdmin.getName());
++                isSign = true;
++                body.getChildren().clear();
++                body.getChildren().add(msg);
++                headerBar.getChildren().clear();
++                headerBar.setVisible(true);
++                headerBar.getChildren().addAll(productAddBtn,loggedOutButton,viewOrdersBtn,newAdminSignUpBtn,viewRegisteredUser,viewAdminUserDetails);
++
++            } else {
++                userName.clear();
++                password.clear();
++
++                Alert alert = new Alert(Alert.AlertType.WARNING);
++                alert.setContentText("Incorrect username and password");
++                alert.show();
++            }
++
++        });
++
++        welcomeBox = new HBox();
++        welcomeLabel = new Label("Welcome to My Ecom Store");
++
++        welcomeLabel.setStyle("-fx-font-size : 30pt; -fx-font-weight : bold; -fx-text-fill : #8B088B");
++        welcomeBox.getChildren().add(welcomeLabel);
++        welcomeBox.setAlignment(Pos.TOP_CENTER);
++
++        signUpBtn.setOnAction(actionEvent -> {
++            headerBar.setVisible(false);
++            footerBar.setVisible(false);
++            body.getChildren().clear();
++            body.getChildren().addAll(welcomeBox, signUpPage);
++        });
++    }
++    public void createAdminPage(){
++        Admin admin=new Admin();
++        productAddBtn=new Button("Add New Product");
++        viewOrdersBtn=new Button("Placed Order Detail");
++        newAdminSignUpBtn=new Button("Admin Sign Up");
++        viewRegisteredUser=new Button("User Details");
++        viewAdminUserDetails=new Button("Admins Details");
++
++        productAddBtn.setOnAction(actionEvent -> {
++            body.getChildren().clear();
++            VBox box=admin.productAddPage();
++            body.getChildren().add(box);
++        });
++
++        viewOrdersBtn.setOnAction(actionEvent -> {
++            body.getChildren().clear();
++            VBox box=admin.viewOrderPage();
++            body.getChildren().add(box);
++        });
++        newAdminSignUpBtn.setOnAction(actionEvent -> {
++            body.getChildren().clear();
++            VBox box=admin.newAdminSignUpPage();
++            body.getChildren().add(box);
++        });
++        viewRegisteredUser.setOnAction(actionEvent -> {
++            body.getChildren().clear();
++            VBox box=admin.viewRegisteredUserDetails();
++            body.getChildren().add(box);
++        });
++        viewAdminUserDetails.setOnAction(actionEvent -> {
++            body.getChildren().clear();
++            VBox box=admin.viewAdminUserDetails();
++            body.getChildren().add(box);
++
++        });
++
++    }
++    public void createSignUpPage() {
++
++        signUpPage=new GridPane();
++        signUpPage.setHgap(10);
++        signUpPage.setVgap(15);
++
++        Text name = new Text("Name :");
++        Text email = new Text("Email :");
++        Text mobile = new Text("Mobile :");
++        Text pass = new Text("Password :");
++        Text confirmPass = new Text("Confirm Password :");
++
++        TextField nameField = new TextField();
++        TextField emailField = new TextField();
++        TextField mobileField = new TextField();
++        PasswordField passwordField = new PasswordField();
++        PasswordField confirmPassField = new PasswordField();
++
++        signUpPage.add(name, 0, 0);
++        signUpPage.add(email, 0, 1);
++        signUpPage.add(pass, 0, 2);
++        signUpPage.add(confirmPass, 0, 3);
++        signUpPage.add(mobile, 0, 4);
++        signUpPage.add(nameField, 1, 0);
++        signUpPage.add(emailField, 1, 1);
++        signUpPage.add(passwordField, 1, 2);
++        signUpPage.add(confirmPassField, 1, 3);
++        signUpPage.add(mobileField, 1, 4);
++        HBox hbox = new HBox(80);
++        hbox.setAlignment(Pos.CENTER);
++        Button confirmBtn = new Button("Confirm");
++        hbox.getChildren().addAll(confirmBtn, backBtn);
++
++        signUpPage.add(hbox, 1, 5);
++        signUpPage.setAlignment(Pos.CENTER);
++
++
++
++        confirmBtn.setOnAction(actionEvent1 -> {
++            String newUserId = emailField.getText();
++            String newMobile = mobileField.getText();
++            String newName = nameField.getText();
++            String newPass = passwordField.getText();
++            String newConfirmPass = confirmPassField.getText();
++
++            if(newUserId.isEmpty() || newMobile.isEmpty() ||newName.isEmpty() || newPass.isEmpty()){
++                showDialog("field should not be empty");
++                return;
++            }
++            if (!newPass.equals(newConfirmPass)) {
++                showDialog("password does not match with confirm password");
++                return;
++            }
++
++            Boolean emailCheck = Login.isAlreadyRegistered(newUserId,"email");
++            Boolean mobileCheck = Login.isAlreadyRegistered(newMobile,"mobile");
++
++            if (emailCheck && mobileCheck) {
++                showDialog("email and mobile is already registered");
++            } else if (mobileCheck) {
++                showDialog("Mobile already Registered");
++            } else if (emailCheck) {
++                showDialog("email is already registered");
++            } else {
++//                    email and mobile no is not registered already so update db for login information
++                if (Login.newCustomerRegistration(newName, newUserId, newMobile, newPass)) {
++                    showDialog("Registration completed");
++                } else {
++                    showDialog("Registration Failed");
++                }
++
++                body.getChildren().clear();
++                body.getChildren().add(loginPage);
++            }
++        });
++    }
++    public void cartListPage(){
++
++        VBox cartBox = ProductList.iteamInCart(items);
++        cartBox.setPadding(new Insets(10));
++        cartBox.setSpacing(5);
++
++        Button placeOrderBtn=new Button("Place Order");
++        Button clearBtn = new Button("Clear All");
++        Button deleteBtn = new Button("Delete");
++
++        placeOrderBtn.setOnAction(actionEvent -> {
++            if (isSign) {
++                int count = Order.placeMultipleOrder(loggedInCustomer, items);
++                if (count == 0) {
++                    showDialog("Select item first");
++                } else showDialog(count + " order Placed!");
++            } else showDialog("please login first");
++        });
++
++        clearBtn.setOnAction(actionEvent1 -> items.clear());
++
++        deleteBtn.setOnAction(actionEvent1 -> {
++            Product product = ProductList.getSelectedProduct();
++            if (product != null) {
++                items.remove(product);
++                showDialog("iteam removed successfully from cart");
++            } else {
++                showDialog("select iteam first");
++            }
++        });
++
++        HBox hbox = new HBox(60);
++        hbox.setAlignment(Pos.CENTER);
++        hbox.getChildren().addAll(placeOrderBtn, clearBtn, deleteBtn);
++        cartBox.getChildren().add(hbox);
++        cartBox.setAlignment(Pos.CENTER);
++
++        cartBtn.setOnAction(actionEvent -> {
++            body.getChildren().clear();
++            body.getChildren().add(cartBox);
++            footerBar.setVisible(false);
++        });
++    }
++    public void showDialog(String msg) {
++
++        Alert alert = new Alert(Alert.AlertType.INFORMATION);
++        alert.setHeaderText("");
++        alert.setContentText(msg);
++        alert.show();
++    }
++
++
++}
++
++
++
++
+Index: src/main/java/com/example/ecomapp/Order.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.ecomapp;public class Order {\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/ecomapp/Order.java b/src/main/java/com/example/ecomapp/Order.java
+--- a/src/main/java/com/example/ecomapp/Order.java	(revision a532060ff5f0fd0cb97e5bd12472fd0f04596724)
++++ b/src/main/java/com/example/ecomapp/Order.java	(date 1682493224713)
+@@ -1,2 +1,161 @@
+-package com.example.ecomapp;public class Order {
+-}
++package com.example.ecomapp;
++
++import javafx.beans.property.SimpleDoubleProperty;
++import javafx.beans.property.SimpleIntegerProperty;
++import javafx.beans.property.SimpleStringProperty;
++import javafx.collections.FXCollections;
++import javafx.collections.ObservableList;
++
++import java.sql.ResultSet;
++
++public class Order {
++
++    SimpleIntegerProperty id;
++    SimpleIntegerProperty customerId;
++
++    SimpleStringProperty name;
++
++    SimpleDoubleProperty price;
++    SimpleIntegerProperty quantity;
++    SimpleStringProperty order_date;
++    SimpleStringProperty order_status;
++
++
++
++    public Order (int id,  String name, double price,int quantity) {
++        this.id = new SimpleIntegerProperty(id);
++        this.price = new SimpleDoubleProperty(price);
++        this.name = new SimpleStringProperty(name);
++        this.quantity=new SimpleIntegerProperty(quantity);
++
++    }
++    public Order (int id,int customerId,  String name, double price,String order_date,String order_status) {
++        this.id = new SimpleIntegerProperty(id);
++        this.customerId=new SimpleIntegerProperty(customerId);
++
++        this.price = new SimpleDoubleProperty(price);
++        this.name = new SimpleStringProperty(name);
++        this.order_date=new SimpleStringProperty(order_date);
++        this.order_status=new SimpleStringProperty(order_status);
++
++    }
++    public static ObservableList<Order> getAllOrders(){
++        String selectAllOrders="select product.id,name,sum(product.price),count(orders.quantity) from orders join product on orders.product_id=product.id where orders.customer_id="+UserInterface.loggedInCustomer.getId()+" group by product.id;";
++        return fatchDetaFromDb(selectAllOrders);
++    }
++    public static ObservableList<Order> getAllOrdersAdmin(){
++        String selectAllOrders="select orders.id,orders.customer_id,product.name,product.price,orders.quantity,orders.order_date,orders.order_status from orders join product on orders.product_id=product.id;";
++        return fatchDetaFromDbForAdmin(selectAllOrders);
++    }
++    public static ObservableList<Order> fatchDetaFromDbForAdmin(String query){
++        ObservableList<Order>data= FXCollections.observableArrayList();
++        DbConnection connection=new DbConnection();
++        try{
++            ResultSet rs=connection.getQueryTable(query);
++            while(rs.next()){
++                Order order=new Order(rs.getInt("id"),rs.getInt("customer_id"),rs.getString("name"),
++                        rs.getDouble("price"),rs.getString("order_date"),rs.getString("order_status")
++                );
++
++                data.add(order);
++            }
++            return data;
++        }
++        catch (Exception e){
++            e.printStackTrace();
++        }
++        return null;
++
++    }
++    public static ObservableList<Order> fatchDetaFromDb(String query){
++        ObservableList<Order>data= FXCollections.observableArrayList();
++        DbConnection connection=new DbConnection();
++        try{
++            ResultSet rs=connection.getQueryTable(query);
++            while(rs.next()){
++                Order order=new Order(rs.getInt("id"),rs.getString("name"),
++                        rs.getDouble("sum(product.price)"),rs.getInt("count(orders.quantity)")
++                );
++
++                data.add(order);
++            }
++            return data;
++        }
++        catch (Exception e){
++            e.printStackTrace();
++        }
++        return null;
++
++    }
++
++
++    public int getId() {
++        return id.get();
++    }
++
++    public String getName() {
++        return name.get();
++    }
++
++    public double getPrice() {
++        return price.get();
++    }
++
++    public int getQuantity() {
++        return quantity.get();
++    }
++
++    public String getOrder_date() {
++        return order_date.get();
++    }
++
++    public String getOrder_status() {
++        return order_status.get();
++    }
++
++    public int getCustomerId() {
++        return customerId.get();
++    }
++
++    public static boolean placeOrder(User customer, Product product){
++        String groupOrderId="SELECT max(group_order_id)+1 id from orders;";
++        DbConnection con=new DbConnection();
++        try{
++            ResultSet rs=con.getQueryTable(groupOrderId);
++            if(rs.next()){
++                String placeOrder="INSERT INTO ORDERS(group_order_id,customer_id,product_id,product_name) VALUES " +
++                        "("+rs.getInt("id")+","+customer.getId()+","+product.getId()+",'"+product.getName()+"');";
++                return con.updateDb(placeOrder)!=0;
++            }
++
++        }catch (Exception e){
++            e.printStackTrace();
++        }
++        return false;
++    }
++
++    public static int placeMultipleOrder(User customer, ObservableList<Product>productList){
++        String groupOrderId="SELECT max(group_order_id)+1 id from orders;";
++        DbConnection con=new DbConnection();
++        int count=0;
++        try{
++            ResultSet rs=con.getQueryTable(groupOrderId);
++            if(rs.next()){
++                for(Product product : productList){
++                    String placeOrder="INSERT INTO ORDERS(group_order_id,customer_id,product_id,product_name) VALUES " +
++                            "("+rs.getInt("id")+","+customer.getId()+","+product.getId()+",'"+product.getName()+"');";
++                    count+=con.updateDb(placeOrder);
++                }
++                return count;
++            }
++
++        }catch (Exception e){
++            e.printStackTrace();
++        }
++        return 0;
++    }
++
++
++
++}
++
+Index: src/main/java/com/example/ecomapp/ProductList.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.ecomapp;public class ProductList {\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/ecomapp/ProductList.java b/src/main/java/com/example/ecomapp/ProductList.java
+--- a/src/main/java/com/example/ecomapp/ProductList.java	(revision a532060ff5f0fd0cb97e5bd12472fd0f04596724)
++++ b/src/main/java/com/example/ecomapp/ProductList.java	(date 1682084002751)
+@@ -1,2 +1,61 @@
+-package com.example.ecomapp;public class ProductList {
++package com.example.ecomapp;
++
++
++import javafx.collections.ObservableList;
++import javafx.geometry.Insets;
++import javafx.scene.control.TableColumn;
++import javafx.scene.control.TableView;
++import javafx.scene.control.cell.PropertyValueFactory;
++import javafx.scene.layout.VBox;
++
++public class ProductList {
++    public static TableView<Product> productTable;
++    public static VBox createTable(ObservableList<Product> data) {
++
++
++//        cols
++        TableColumn id=new TableColumn("ID");
++        id.setCellValueFactory(new PropertyValueFactory<>("id"));
++//
++        TableColumn price = new TableColumn("PRICE");
++        price.setCellValueFactory(new PropertyValueFactory<>("price"));
++//
++        TableColumn name = new TableColumn("NAME");
++        name.setCellValueFactory(new PropertyValueFactory<>("name"));
++
++        TableColumn quantity=new TableColumn("Quantity");
++        quantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
++
++//        dummy data
++
++
++        productTable = new TableView<>();
++
++        productTable.getColumns().addAll(id,name,price,quantity);
++
++        productTable.setItems(data);
++        // to eliminate extra column and spread column at equal space
++        productTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
++        productTable.setTableMenuButtonVisible(true);
++
++        VBox vbox = new VBox();
++        vbox.setFillWidth(true);
++        vbox.setPadding(new Insets(20));
++        vbox.getChildren().add (productTable);
++        return vbox;
++    }
++
++
++    public static VBox getAllProducts(){
++        ObservableList<Product>data=Product.getAllProduct();
++        return createTable(data);
++    }
++
++    public static Product getSelectedProduct(){
++        return productTable.getSelectionModel().getSelectedItem();
++    }
++
++    public static VBox iteamInCart(ObservableList<Product>data){
++        return createTable(data);
++    }
+ }
+Index: src/main/java/com/example/ecomapp/Customer.java
+===================================================================
+diff --git a/src/main/java/com/example/ecomapp/Customer.java b/src/main/java/com/example/ecomapp/Customer.java
+deleted file mode 100644
+--- a/src/main/java/com/example/ecomapp/Customer.java	(revision a532060ff5f0fd0cb97e5bd12472fd0f04596724)
++++ /dev/null	(revision a532060ff5f0fd0cb97e5bd12472fd0f04596724)
+@@ -1,2 +0,0 @@
+-package com.example.ecomapp;public class Customer {
+-}
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"3a518344-82c2-4cf7-a376-0982bc0abe7c\" name=\"Changes\" comment=\"\" />\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"2OYAAI6Hv2GREMiEgclusHpwwgq\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"RunOnceActivity.OpenProjectViewOnStart\": \"true\",\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"git-widget-placeholder\": \"master\",\r\n    \"settings.editor.selected.configurable\": \"preferences.lookFeel\"\r\n  }\r\n}]]></component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"3a518344-82c2-4cf7-a376-0982bc0abe7c\" name=\"Changes\" comment=\"\" />\r\n      <created>1681727000653</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1681727000653</updated>\r\n    </task>\r\n    <servers />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision a532060ff5f0fd0cb97e5bd12472fd0f04596724)
++++ b/.idea/workspace.xml	(date 1682508252177)
+@@ -4,14 +4,48 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="3a518344-82c2-4cf7-a376-0982bc0abe7c" name="Changes" comment="" />
++    <list default="true" id="3a518344-82c2-4cf7-a376-0982bc0abe7c" name="Changes" comment="">
++      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/Customer.java" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/DbConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/DbConnection.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/EcomApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/EcomApp.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/Login.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/Login.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/Order.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/OrderList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/OrderList.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/Product.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/ProductList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/ProductList.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/SearchProductList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/SearchProductList.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/UserInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ecomapp/UserInterface.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
++    </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+     <option name="LAST_RESOLUTION" value="IGNORE" />
++  </component>
++  <component name="FileTemplateManagerImpl">
++    <option name="RECENT_TEMPLATES">
++      <list>
++        <option value="Class" />
++      </list>
++    </option>
+   </component>
+   <component name="Git.Settings">
++    <option name="RECENT_BRANCH_BY_REPOSITORY">
++      <map>
++        <entry key="$PROJECT_DIR$" value="main" />
++      </map>
++    </option>
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
++    <option name="ROOT_SYNC" value="SYNC" />
++  </component>
++  <component name="HighlightingSettingsPerFile">
++    <setting file="file://$PROJECT_DIR$/src/main/java/com/example/ecomapp/Admin.java" root0="SKIP_INSPECTION" />
++  </component>
++  <component name="ProblemsViewState">
++    <option name="selectedTabId" value="CurrentFile" />
+   </component>
+   <component name="ProjectId" id="2OYAAI6Hv2GREMiEgclusHpwwgq" />
+   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+@@ -23,10 +57,31 @@
+   "keyToString": {
+     "RunOnceActivity.OpenProjectViewOnStart": "true",
+     "RunOnceActivity.ShowReadmeOnStart": "true",
++    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+     "git-widget-placeholder": "master",
++    "last_opened_file_path": "C:/Users/Nren/IdeaProjects/EcomApp",
++    "project.structure.last.edited": "Modules",
++    "project.structure.proportion": "0.15",
++    "project.structure.side.proportion": "0.2",
+     "settings.editor.selected.configurable": "preferences.lookFeel"
+   }
+ }]]></component>
++  <component name="RecentsManager">
++    <key name="CopyFile.RECENT_KEYS">
++      <recent name="C:\Users\Nren\IdeaProjects\EcomApp\src\main\java" />
++      <recent name="C:\Users\Nren\IdeaProjects\EcomApp\src" />
++      <recent name="C:\Users\Nren\IdeaProjects\EcomApp\lib" />
++    </key>
++  </component>
++  <component name="RunManager">
++    <configuration name="EcomApp" type="Application" factoryName="Application">
++      <option name="MAIN_CLASS_NAME" value="com.example.ecomapp.EcomApp" />
++      <module name="EcomApp" />
++      <method v="2">
++        <option name="Make" enabled="true" />
++      </method>
++    </configuration>
++  </component>
+   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+   <component name="TaskManager">
+     <task active="true" id="Default" summary="Default task">
+@@ -38,4 +93,29 @@
+     </task>
+     <servers />
+   </component>
++  <component name="Vcs.Log.Tabs.Properties">
++    <option name="TAB_STATES">
++      <map>
++        <entry key="MAIN">
++          <value>
++            <State />
++          </value>
++        </entry>
++      </map>
++    </option>
++  </component>
++  <component name="XDebuggerManager">
++    <breakpoint-manager>
++      <breakpoints>
++        <breakpoint enabled="true" type="java-exception">
++          <properties class="java.lang.NullPointerException" package="java.lang" />
++          <option name="timeStamp" value="1" />
++        </breakpoint>
++        <breakpoint enabled="true" type="java-exception">
++          <properties class="java.lang.ClassCastException" package="java.lang" />
++          <option name="timeStamp" value="2" />
++        </breakpoint>
++      </breakpoints>
++    </breakpoint-manager>
++  </component>
+ </project>
+\ No newline at end of file
+Index: src/main/java/module-info.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>module com.example.ecomapp {\r\n    requires javafx.controls;\r\n    requires javafx.fxml;\r\n            \r\n                            \r\n    opens com.example.ecomapp to javafx.fxml;\r\n    exports com.example.ecomapp;\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/module-info.java b/src/main/java/module-info.java
+--- a/src/main/java/module-info.java	(revision a532060ff5f0fd0cb97e5bd12472fd0f04596724)
++++ b/src/main/java/module-info.java	(date 1681798604433)
+@@ -1,8 +1,9 @@
+ module com.example.ecomapp {
+     requires javafx.controls;
+     requires javafx.fxml;
+-            
+-                            
++    requires java.sql;
++
++
+     opens com.example.ecomapp to javafx.fxml;
+     exports com.example.ecomapp;
+ }
+\ No newline at end of file
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"VcsDirectoryMappings\">\r\n    <mapping directory=\"$PROJECT_DIR$/..\" vcs=\"Git\" />\r\n    <mapping directory=\"$PROJECT_DIR$\" vcs=\"Git\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+--- a/.idea/vcs.xml	(revision a532060ff5f0fd0cb97e5bd12472fd0f04596724)
++++ b/.idea/vcs.xml	(date 1682140619739)
+@@ -3,5 +3,7 @@
+   <component name="VcsDirectoryMappings">
+     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+     <mapping directory="$PROJECT_DIR$" vcs="Git" />
++    <mapping directory="$PROJECT_DIR$/main" vcs="Git" />
++    <mapping directory="$PROJECT_DIR$/master" vcs="Git" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: src/main/java/com/example/ecomapp/Login.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.ecomapp;public class Login {\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/ecomapp/Login.java b/src/main/java/com/example/ecomapp/Login.java
+--- a/src/main/java/com/example/ecomapp/Login.java	(revision a532060ff5f0fd0cb97e5bd12472fd0f04596724)
++++ b/src/main/java/com/example/ecomapp/Login.java	(date 1682483216254)
+@@ -1,2 +1,114 @@
+-package com.example.ecomapp;public class Login {
++package com.example.ecomapp;
++
++import java.sql.ResultSet;
++
++public class Login {
++
++
++    public User customerLogin(String userName, String password){
++
++        String loginQuery="SELECT * from loginInfo where email='"+userName+"' AND password='"+password+"';";
++        DbConnection conn=new DbConnection();
++        ResultSet rs=conn.getQueryTable(loginQuery);
++
++        try{
++            if(rs.next()){
++                return new User(rs.getInt("id"),
++                        rs.getString("name"),
++                        rs.getString("email"),
++                        rs.getString("mobile"));
++            }
++        }
++        catch(Exception e){
++            e.printStackTrace();
++        }
++        return null;
++    }
++
++    public User adminLogin(String userName, String password){
++
++        String loginQuery="SELECT * from admintable where email='"+userName+"' AND password='"+password+"';";
++        DbConnection conn=new DbConnection();
++        ResultSet rs=conn.getQueryTable(loginQuery);
++
++        try{
++            if(rs.next()){
++                return new User(rs.getInt("id"),
++                        rs.getString("name"),
++                        rs.getString("email"),
++                        rs.getString("mobile"));
++            }
++        }
++        catch(Exception e){
++            e.printStackTrace();
++        }
++        return null;
++    }
++
++//    for customer
++    public static boolean isAlreadyRegistered(String query,String emailOrMobile){
++
++        String loginQuery="SELECT * from loginInfo where "+emailOrMobile+"='"+query+"';";
++        DbConnection conn=new DbConnection();
++        ResultSet rs=conn.getQueryTable(loginQuery);
++
++        try{
++            if(rs.next()){
++                return true;
++            }
++        }
++        catch(Exception e){
++            e.printStackTrace();
++        }
++        return false;
++    }
++
++    public  static boolean newCustomerRegistration(String name,String email,String mobile,String password){
++        String registerUser="INSERT INTO loginInfo(name,email,mobile,password) values" +
++                "('"+name+"','"+email+"','"+mobile+"','"+password+"');";
++        DbConnection con=new DbConnection();
++
++        try{
++            return con.updateDb(registerUser)!=0;
++
++        }catch (Exception e){
++            e.printStackTrace();
++        }
++        return false;
++    }
++
++//    for admin
++    public static boolean isAlreadyAdminRegistered(String query,String emailOrMobile){
++
++        String loginQuery="SELECT * from admintable where "+emailOrMobile+"='"+query+"';";
++        DbConnection conn=new DbConnection();
++        ResultSet rs=conn.getQueryTable(loginQuery);
++
++        try{
++            if(rs.next()){
++                return true;
++            }
++        }
++        catch(Exception e){
++            e.printStackTrace();
++        }
++        return false;
++    }
++    public  static boolean newAdminRegistration(String name,String email,String password,String mobile){
++        String registerUser="INSERT INTO admintable(name,email,password,mobile) values" +
++                "('"+name+"','"+email+"','"+password+"','"+mobile+"');";
++        DbConnection con=new DbConnection();
++
++        try{
++            if(mobile.length()==10){
++                return con.updateDb(registerUser)!=0;
++            }else return false;
++
++
++        }catch (Exception e){
++            e.printStackTrace();
++        }
++        return false;
++    }
++
+ }
+Index: src/main/java/com/example/ecomapp/DbConnection.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.ecomapp;public class DbConnection {\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/ecomapp/DbConnection.java b/src/main/java/com/example/ecomapp/DbConnection.java
+--- a/src/main/java/com/example/ecomapp/DbConnection.java	(revision a532060ff5f0fd0cb97e5bd12472fd0f04596724)
++++ b/src/main/java/com/example/ecomapp/DbConnection.java	(date 1681972179139)
+@@ -1,2 +1,42 @@
+-package com.example.ecomapp;public class DbConnection {
++package com.example.ecomapp;
++import java.sql.*;
++
++public class DbConnection {
++    private final String dburl="jdbc:mysql://localhost:3306/ecomapp";
++    private final String userName="root";
++
++    private final String password="1234";
++
++    private Statement getStatement(){
++        try{
++            Connection connection=DriverManager.getConnection(dburl,userName,password);
++            return connection.createStatement();
++        }
++        catch (Exception e){
++            e.printStackTrace();
++        }
++        return null;
++    }
++
++    public ResultSet getQueryTable(String query){
++        try {
++            Statement statement=getStatement();
++            return statement.executeQuery(query);
++        }
++        catch(Exception e) {
++            e.printStackTrace();
++        }
++        return null;
++    }
++
++    public int updateDb(String query){
++        try{
++            Statement statement=getStatement();
++            return statement.executeUpdate(query);
++        }catch (Exception e){
++            e.printStackTrace();
++        }
++        return 0;
++    }
+ }
++
+Index: src/main/java/com/example/ecomapp/Product.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.ecomapp;public class Product {\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/ecomapp/Product.java b/src/main/java/com/example/ecomapp/Product.java
+--- a/src/main/java/com/example/ecomapp/Product.java	(revision a532060ff5f0fd0cb97e5bd12472fd0f04596724)
++++ b/src/main/java/com/example/ecomapp/Product.java	(date 1682087866449)
+@@ -1,2 +1,62 @@
+-package com.example.ecomapp;public class Product {
++package com.example.ecomapp;
++
++import javafx.beans.property.SimpleDoubleProperty;
++import javafx.beans.property.SimpleIntegerProperty;
++import javafx.beans.property.SimpleStringProperty;
++import javafx.collections.FXCollections;
++import javafx.collections.ObservableList;
++
++import java.sql.ResultSet;
++
++public class Product {
++    SimpleIntegerProperty id;
++
++    SimpleDoubleProperty price;
++    SimpleStringProperty name;
++    SimpleIntegerProperty quantity;
++
++    public Product(int id, double price, String name,int quantity) {
++        this.id = new SimpleIntegerProperty(id);
++        this.price = new SimpleDoubleProperty(price);
++        this.name = new SimpleStringProperty(name);
++        this.quantity=new SimpleIntegerProperty(quantity);
++    }
++
++    public static ObservableList<Product> getAllProduct(){
++        String selectAllProduct="select id,name,price,quantity from product";
++        return fatchDetaFromDb(selectAllProduct);
++    }
++    public static ObservableList<Product> fatchDetaFromDb(String query){
++        ObservableList<Product>data= FXCollections.observableArrayList();
++        DbConnection connection=new DbConnection();
++        try{
++            ResultSet rs=connection.getQueryTable(query);
++            while(rs.next()){
++                Product product=new Product(rs.getInt("id"),rs.getDouble("price"),rs.getString("name"),rs.getInt("quantity"));
++                data.add(product);
++            }
++            return data;
++        }
++        catch (Exception e){
++            e.printStackTrace();
++        }
++        return null;
++
++    }
++    public int getId() {
++        return id.get();
++    }
++
++    public int getQuantity() {
++        return quantity.get();
++    }
++
++    public double getPrice() {
++        return price.get();
++    }
++
++
++    public String getName() {
++        return name.get();
++    }
+ }
+Index: src/main/java/com/example/ecomapp/EcomApp.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.ecomapp;\r\n\r\nimport javafx.application.Application;\r\nimport javafx.fxml.FXMLLoader;\r\nimport javafx.scene.Scene;\r\nimport javafx.stage.Stage;\r\n\r\nimport java.io.IOException;\r\n\r\npublic class HelloApplication extends Application {\r\n    @Override\r\n    public void start(Stage stage) throws IOException {\r\n        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(\"hello-view.fxml\"));\r\n        Scene scene = new Scene(fxmlLoader.load(), 320, 240);\r\n        stage.setTitle(\"Hello!\");\r\n        stage.setScene(scene);\r\n        stage.show();\r\n    }\r\n\r\n    public static void main(String[] args) {\r\n        launch();\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/ecomapp/EcomApp.java b/src/main/java/com/example/ecomapp/EcomApp.java
+--- a/src/main/java/com/example/ecomapp/EcomApp.java	(revision a532060ff5f0fd0cb97e5bd12472fd0f04596724)
++++ b/src/main/java/com/example/ecomapp/EcomApp.java	(date 1682083821673)
+@@ -1,18 +1,20 @@
+ package com.example.ecomapp;
+ 
+ import javafx.application.Application;
+-import javafx.fxml.FXMLLoader;
++
+ import javafx.scene.Scene;
++
+ import javafx.stage.Stage;
+ 
+ import java.io.IOException;
+ 
+-public class HelloApplication extends Application {
++public class EcomApp extends Application {
++    private final UserInterface ui=new UserInterface();
+     @Override
+     public void start(Stage stage) throws IOException {
+-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
+-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+-        stage.setTitle("Hello!");
++
++        Scene scene = new Scene(ui.createContent());
++        stage.setTitle("Ecommerce!");
+         stage.setScene(scene);
+         stage.show();
+     }
+Index: pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\r\n         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd\">\r\n  <modelVersion>4.0.0</modelVersion>\r\n\r\n  <groupId>com.example</groupId>\r\n  <artifactId>EcomApp</artifactId>\r\n  <version>1.0-SNAPSHOT</version>\r\n  <name>EcomApp</name>\r\n\r\n  <properties>\r\n    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\r\n    <junit.version>5.9.1</junit.version>      </properties>\r\n\r\n  <dependencies>\r\n    <dependency>\r\n      <groupId>org.openjfx</groupId>\r\n      <artifactId>javafx-controls</artifactId>\r\n      <version>20-ea+4</version>\r\n    </dependency>\r\n    <dependency>\r\n      <groupId>org.openjfx</groupId>\r\n      <artifactId>javafx-fxml</artifactId>\r\n      <version>20-ea+4</version>\r\n    </dependency>\r\n                                    \r\n    <dependency>\r\n      <groupId>org.junit.jupiter</groupId>\r\n      <artifactId>junit-jupiter-api</artifactId>\r\n      <version>${junit.version}</version>\r\n      <scope>test</scope>\r\n    </dependency>\r\n    <dependency>\r\n      <groupId>org.junit.jupiter</groupId>\r\n      <artifactId>junit-jupiter-engine</artifactId>\r\n      <version>${junit.version}</version>\r\n      <scope>test</scope>\r\n    </dependency>              </dependencies>\r\n\r\n  <build>\r\n        <plugins>\r\n            <plugin>\r\n        <groupId>org.apache.maven.plugins</groupId>\r\n        <artifactId>maven-compiler-plugin</artifactId>\r\n        <version>3.10.1</version>\r\n        <configuration>\r\n          <source>20</source>\r\n          <target>20</target>\r\n        </configuration>\r\n            </plugin>\r\n      <plugin>\r\n        <groupId>org.openjfx</groupId>\r\n        <artifactId>javafx-maven-plugin</artifactId>\r\n        <version>0.0.8</version>\r\n        <executions>\r\n          <execution>\r\n            <!-- Default configuration for running with: mvn clean javafx:run -->\r\n            <id>default-cli</id>\r\n            <configuration>\r\n              <mainClass>com.example.ecomapp/com.example.ecomapp.HelloApplication</mainClass>\r\n              <launcher>app</launcher>\r\n              <jlinkZipName>app</jlinkZipName>\r\n              <jlinkImageName>app</jlinkImageName>\r\n              <noManPages>true</noManPages>\r\n              <stripDebug>true</stripDebug>\r\n              <noHeaderFiles>true</noHeaderFiles>\r\n            </configuration>\r\n          </execution>\r\n        </executions>\r\n      </plugin>\r\n          </plugins>\r\n  </build>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pom.xml b/pom.xml
+--- a/pom.xml	(revision a532060ff5f0fd0cb97e5bd12472fd0f04596724)
++++ b/pom.xml	(date 1681727367757)
+@@ -58,7 +58,7 @@
+             <!-- Default configuration for running with: mvn clean javafx:run -->
+             <id>default-cli</id>
+             <configuration>
+-              <mainClass>com.example.ecomapp/com.example.ecomapp.HelloApplication</mainClass>
++              <mainClass>com.example.ecomapp/com.example.ecomapp.EcomApp</mainClass>
+               <launcher>app</launcher>
+               <jlinkZipName>app</jlinkZipName>
+               <jlinkImageName>app</jlinkImageName>
+Index: src/main/java/com/example/ecomapp/SearchProductList.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.ecomapp;public class SearchProductList {\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/ecomapp/SearchProductList.java b/src/main/java/com/example/ecomapp/SearchProductList.java
+--- a/src/main/java/com/example/ecomapp/SearchProductList.java	(revision a532060ff5f0fd0cb97e5bd12472fd0f04596724)
++++ b/src/main/java/com/example/ecomapp/SearchProductList.java	(date 1682090542702)
+@@ -1,2 +1,16 @@
+-package com.example.ecomapp;public class SearchProductList {
++package com.example.ecomapp;
++
++import javafx.collections.ObservableList;
++import javafx.scene.layout.VBox;
++
++import java.sql.ResultSet;
++
++public class SearchProductList {
++
++    public static VBox searchProduct(String search){
++        String query="select * from product where name like '%"+search+"%';";
++        VBox table=ProductList.createTable(Product.fatchDetaFromDb(query));
++        return table;
++    }
++
+ }
